@@ -9,8 +9,9 @@ import socketHandler from "./socket/socket.js";
 import connectDB from "./config/db.js";
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: "https://teambcz.netlify.app",
+}));app.use(express.json());
 
 connectDB();
 

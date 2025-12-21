@@ -17,7 +17,7 @@ const socketHandler = (io) => {
   });
 
   io.on("connection", (socket) => {
-    console.log("User connected:", socket.userId);
+    // console.log("User connected:", socket.userId);
 
     socket.on("send_message", async ({ receiver, text }) => {
       const msg = await Message.create({

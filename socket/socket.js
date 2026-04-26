@@ -43,13 +43,13 @@ const socketHandler = (io) => {
       };
 
       if (groupId) {
-        msgData.groupId = groupId;
+        msgData.groupId = String(groupId);
         const msg = await Message.create(msgData);
-        io.to(groupId).emit("receive_message", msg);
+        io.to(String(groupId)).emit("receive_message", msg);
       } else {
-        msgData.receiver = receiver.toString();
+        msgData.receiver = String(receiver);
         const msg = await Message.create(msgData);
-        io.to(receiver).emit("receive_message", msg);
+        io.to(String(receiver)).emit("receive_message", msg);
         socket.emit("receive_message", msg);
       }
     });
@@ -57,22 +57,22 @@ const socketHandler = (io) => {
     // --- Signaling for Calling ---
     socket.on("call_user", ({ receiver, groupId, offer, isVideo }) => {
       if (groupId) {
-        socket.to(groupId).emit("incoming_call", { sender: socket.userId, offer, isVideo, groupId });
+        socket.to(String(groupId)).emit("incoming_call", { sender: socket.userId, offer, isVideo, groupId: String(groupId) });
       } else {
-        io.to(receiver).emit("incoming_call", { sender: socket.userId, offer, isVideo });
+        io.to(String(receiver)).emit("incoming_call", { sender: socket.userId, offer, isVideo });
       }
     });
 
     socket.on("answer_call", ({ receiver, answer }) => {
-      io.to(receiver).emit("call_answered", { sender: socket.userId, answer });
+      io.to(String(receiver)).emit("call_answered", { sender: socket.userId, answer });
     });
 
     socket.on("ice_candidate", ({ receiver, candidate }) => {
-      io.to(receiver).emit("ice_candidate", { sender: socket.userId, candidate });
+      io.to(String(receiver)).emit("ice_candidate", { sender: socket.userId, candidate });
     });
 
     socket.on("end_call", ({ receiver }) => {
-      io.to(receiver).emit("call_ended");
+      io.to(String(receiver)).emit("call_ended");
     });
     // ----------------------------
 

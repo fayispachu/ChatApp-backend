@@ -42,8 +42,8 @@ const socketHandler = (io) => {
     });
 
     // --- Signaling for Calling ---
-    socket.on("call_user", ({ receiver, offer }) => {
-      io.to(receiver).emit("incoming_call", { sender: socket.userId, offer });
+    socket.on("call_user", ({ receiver, offer, isVideo }) => {
+      io.to(receiver).emit("incoming_call", { sender: socket.userId, offer, isVideo });
     });
 
     socket.on("answer_call", ({ receiver, answer }) => {

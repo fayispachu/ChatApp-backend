@@ -33,8 +33,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-// ✅ Explicitly handle pre-flight requests
-app.options("*", cors());
+// ✅ CORS handles pre-flight automatically via app.use(cors()) above
 
 // ✅ Middleware
 app.use(express.json());

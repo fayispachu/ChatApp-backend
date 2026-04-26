@@ -10,6 +10,7 @@ import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import groupRoutes from "./routes/groupRoutes.js";
 
 import socketHandler from "./socket/socket.js";
 import connectDB from "./config/db.js";

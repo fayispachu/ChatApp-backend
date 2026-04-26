@@ -27,23 +27,40 @@ const socketHandler = (io) => {
     // Send current online users to the connected user
     socket.emit("online_users", Array.from(onlineUsers.keys()));
 
-    socket.on("send_message", async ({ receiver, text, fileUrl, fileType }) => {
-      const msg = await Message.create({
+    // Join group rooms
+    socket.on("join_groups", (groups) => {
+      groups.forEach(groupId => socket.join(groupId));
+      console.log(`User ${socket.userId} joined groups:`, groups);
+    });
+
+    socket.on("send_message", async ({ receiver, groupId, text, fileUrl, fileType }) => {
+      const msgData = {
         sender: socket.userId,
-        receiver: receiver.toString(),
         text,
         fileUrl,
         fileType,
         time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      });
+      };
 
-      io.to(receiver).emit("receive_message", msg);
-      socket.emit("receive_message", msg);
+      if (groupId) {
+        msgData.groupId = groupId;
+        const msg = await Message.create(msgData);
+        io.to(groupId).emit("receive_message", msg);
+      } else {
+        msgData.receiver = receiver.toString();
+        const msg = await Message.create(msgData);
+        io.to(receiver).emit("receive_message", msg);
+        socket.emit("receive_message", msg);
+      }
     });
 
     // --- Signaling for Calling ---
-    socket.on("call_user", ({ receiver, offer, isVideo }) => {
-      io.to(receiver).emit("incoming_call", { sender: socket.userId, offer, isVideo });
+    socket.on("call_user", ({ receiver, groupId, offer, isVideo }) => {
+      if (groupId) {
+        socket.to(groupId).emit("incoming_call", { sender: socket.userId, offer, isVideo, groupId });
+      } else {
+        io.to(receiver).emit("incoming_call", { sender: socket.userId, offer, isVideo });
+      }
     });
 
     socket.on("answer_call", ({ receiver, answer }) => {

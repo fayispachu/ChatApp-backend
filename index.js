@@ -12,11 +12,13 @@ import socketHandler from "./socket/socket.js";
 import connectDB from "./config/db.js";
 
 const app = express();
-app.use(cors({ 
-  origin: ["https://teambcz.netlify.app", "http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174"], 
-  credentials: true 
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://teambcz.netlify.app"
+  ],
+  credentials: true,
 }));
-
 app.use(express.json());
 
 // Ensure uploads directory exists
